@@ -1,0 +1,128 @@
+@import "tailwindcss";
+
+/* ============================================================
+   主题调色板 —— 默认「静谧暗色」;亮色通过 html[data-theme] 覆盖
+   ============================================================ */
+:root {
+  /* 暗色(默认)—— 深蓝灰底 + 郁金香柔粉点缀 */
+  --base: #0d1015;
+  --surface: #141922;
+  --surface2: #1a212b;
+  --ink: #e6e8ee;
+  --soft: #98a1b1;
+  --faint: #5b6472;
+  --accent: #d8a1a6;         /* 郁金香 · 尘粉 */
+  --accent2: #a7b4e4;        /* 淡紫 */
+  --line: #232b38;
+  --glow: rgba(96, 125, 139, 0.55);
+
+  color-scheme: dark;
+}
+
+html[data-theme="light"] {
+  --base: #f6f3ee;
+  --surface: #ffffff;
+  --surface2: #f0ece5;
+  --ink: #2a2d33;
+  --soft: #575e6c;
+  --faint: #9aa1ac;
+  --accent: #c16b73;
+  --accent2: #6c7cb8;
+  --line: #e1dcd3;
+  --glow: rgba(93, 116, 148, 0.35);
+
+  color-scheme: light;
+}
+
+/* 把语义色桥接为 Tailwind 工具类(bg-base / text-ink / border-line ...) */
+@theme inline {
+  --color-base: var(--base);
+  --color-surface: var(--surface);
+  --color-surface2: var(--surface2);
+  --color-ink: var(--ink);
+  --color-soft: var(--soft);
+  --color-faint: var(--faint);
+  --color-accent: var(--accent);
+  --color-accent2: var(--accent2);
+  --color-line: var(--line);
+
+  /* 标题走衬线(柔和、静谧),正文走无衬线 */
+  --font-display: Georgia, "Noto Serif SC", "Songti SC", "SimSun", serif;
+  --font-body: ui-sans-serif, system-ui, "Segoe UI", "PingFang SC",
+    "Microsoft YaHei", sans-serif;
+}
+
+/* ============================================================
+   基础
+   ============================================================ */
+html {
+  scroll-behavior: auto;
+}
+
+body {
+  margin: 0;
+  background: var(--base);
+  color: var(--ink);
+  font-family: var(--font-body);
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--base);
+}
+
+/* 细滚动条 */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ============================================================
+   指针光斑(柔和跟随光,而非粒子轰炸)
+   ============================================================ */
+.cursor-glow {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 340px;
+  height: 340px;
+  border-radius: 9999px;
+  pointer-events: none;
+  z-index: 3;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    circle at center,
+    var(--glow) 0%,
+    transparent 62%
+  );
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .cursor-glow.enabled {
+    opacity: 1;
+  }
+}
+
+/* 主题渐显时,给内容一个柔和淡入(避免生硬) */
+#app {
+  animation: app-in 1.1s ease both;
+}
+@keyframes app-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
