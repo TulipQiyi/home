@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from 'vue'
 import SectionHeading from './SectionHeading.vue'
-import { gsap } from '../lib/gsap'
 import bambooImg from '../assets/images/bamboopixel.avif'
 
 const features = [
@@ -19,44 +17,15 @@ const quotes = [
   { text: '一起造房子，build 到天黑。', who: '—— 建筑玩家' },
   { text: '服务器的氛围真好，来了就不想走。', who: '—— 周末党' },
 ]
-
-// 海报滚动动效:放大 → 保持一小会儿 → 缩小回原尺寸(滚动驱动 scrub 时间线)
-const poster = ref<HTMLElement | null>(null)
-let ctx: gsap.Context | undefined
-
-onMounted(() => {
-  const el = poster.value
-  if (!el) return
-  ctx = gsap.context(() => {
-    gsap
-      .timeline({
-        scrollTrigger: {
-          trigger: el,
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: true,
-        },
-      })
-      // 第 1 段:放大
-      .to(el, { scale: 1.1, ease: 'none', duration: 1 }, 0)
-      // 第 2 段:保持放大一会儿(给更长时长制造停留感)
-      .to(el, { scale: 1.1, ease: 'none', duration: 1.6 }, 1)
-      // 第 3 段:缩小回原尺寸
-      .to(el, { scale: 1, ease: 'none', duration: 1 }, 2.6)
-  }, el)
-})
-
-onBeforeUnmount(() => ctx?.revert())
 </script>
 
 <template>
   <SectionHeading id="server" kicker="Server" title="「竹像素」公益服" align="right">
-    <!-- 宽幅电影感的展示面板:字幕压在图底 -->
+    <!-- 宽幅电影感的展示面板:字幕压在图底;仅用 data-reveal 淡入上移(与全站一致),不做滚动缩放 -->
     <div
-      ref="poster"
       data-reveal
       data-reveal-from="up"
-      class="relative origin-center overflow-hidden rounded-2xl border border-line bg-surface/60 shadow-lg will-change-transform"
+      class="relative overflow-hidden rounded-2xl border border-line bg-surface/60 shadow-lg"
     >
       <img
         :src="bambooImg"
@@ -75,7 +44,6 @@ onBeforeUnmount(() => ctx?.revert())
           class="text-xs uppercase tracking-[0.3em] text-accent2 transition-colors hover:text-accent"
         >Bamboo Pixel</a>
         <h3 class="mt-1 font-display text-2xl text-ink sm:text-3xl">竹像素</h3>
-            <!-- 特性标签 -->
         <div class="mt-1.5 flex flex-wrap gap-3">
           <span
             v-for="f in features"
