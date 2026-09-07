@@ -20,7 +20,9 @@ import {
   mdiMessageText,
   mdiMinecraft,
   mdiFlowerTulipOutline,
-  mdiGift
+  mdiGift,
+  mdiApi,
+  mdiFileDocument
 } from '@mdi/js'
 
 // 只收录页面用到的图标的 mdi 名称 → @mdi/js 路径
@@ -44,7 +46,9 @@ const icons: Record<string, string> = {
   messageText: mdiMessageText,
   sprout: mdiSprout,
   minecraft: mdiMinecraft,
-  gift: mdiGift
+  gift: mdiGift,
+  api: mdiApi,
+  'file-document': mdiFileDocument
 }
 
 const props = withDefaults(defineProps<{ name: string; size?: number | string }>(), {

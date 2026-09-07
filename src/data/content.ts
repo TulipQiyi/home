@@ -52,15 +52,39 @@ export const projects: Project[] = [
     href: 'https://github.com/ClouderyStudio/qisoul',
     icon: 'home', // mdiHome
     desc: '温暖、安全的心理健康互助社区。支持心情记录与趋势图表。',
-    role: '核心成员',
+    role: '开发者',
   },
   {
     name: 'psychology · 心灵驿站',
     org: 'Cloudery Studio',
     href: 'https://github.com/ClouderyStudio/psychology',
     icon: 'heart', // mdiHeart
-    desc: '专业心理健康测评平台，提供 PHQ-9、GAD-7、SCL-90、MBTI 等 20+ 标准量表。隐私优先：所有数据本地存储，不上传服务器。',
-    role: '核心成员',
+    desc: '专业心理健康测评平台，提供 PHQ-9、GAD-7、SCL-90、MBTI 等 20+ 标准量表。隐私优先。',
+    role: '开发者',
+  },
+  {
+    name: 'clouderyapi · 云术 API',
+    org: 'Cloudery Studio',
+    href: 'https://github.com/ClouderyStudio/ClouderyApi',
+    icon: 'api', // mdiApi
+    desc: '驱动 Cloudery 生态各站点后端的 ASP.NET Core Web API 服务。',
+    role: '开发者',
+  },
+  {
+    name: '竹像素官网',
+    org: 'Cloudery Studio',
+    href: 'https://github.com/ClouderyStudio/zhuxs-site',
+    icon: 'minecraft', // mdiMinecraft
+    desc: '竹像素官方网站，基于 Vue 3，展示我们的MC服务器介绍与动态。',
+    role: '开发者',
+  },
+  {
+    name: '云术工作室文档站',
+    org: 'Cloudery Studio',
+    href: 'https://github.com/ClouderyStudio/docs',
+    icon: 'file-document', // mdiFileDocument
+    desc: '云术工作室官方文档站点。',
+    role: '开发者',
   },
 ]
 
