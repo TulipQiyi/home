@@ -61,15 +61,19 @@ const caretHidden = computed(() => !alive)
 .caret {
   margin-left: 1px;
   color: var(--accent);
-  animation: blink 1s step-end infinite;
+  animation: blink 1.25s ease-in-out infinite;
 }
 .caret.hide {
   animation: none;
   opacity: 0.4;
 }
 @keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
   50% {
-    opacity: 0;
+    opacity: 0.15;
   }
 }
 </style>

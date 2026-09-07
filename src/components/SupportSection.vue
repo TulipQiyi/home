@@ -17,7 +17,7 @@ let undoMag: (() => void) | undefined
 onMounted(() => {
   const q = quoteEl.value
   if (!q) return
-  undoMag = magneticHover(q, { xStrength: 0.3, yStrength: 0.8, radius: 500 })
+  undoMag = magneticHover(q, { xStrength: 0.3, yStrength: 0.8, radius: 65 })
 
   ctx = gsap.context(() => {
     // 逐字淡入(duration 错开小,顺滑不抢戏)

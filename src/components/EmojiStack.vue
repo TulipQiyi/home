@@ -40,9 +40,26 @@ onBeforeUnmount(() => ctx?.revert())
         height: tile ?? '3.2rem',
         marginLeft: i ? '-0.85rem' : '0',
         zIndex: icons.length - i,
+        animationDelay: `${(i * 0.25).toFixed(2)}s`,
       }"
     >
       <MdiIcon :name="ic" :size="size ?? '1.5rem'" />
     </span>
   </div>
 </template>
+
+<style scoped>
+/* 图标块:呼吸式微亮,像符号各自藏着微光(错峰) */
+.emoji-tile {
+  animation: emoji-shimmer 4.4s ease-in-out infinite;
+}
+@keyframes emoji-shimmer {
+  0%,
+  100% {
+    opacity: 0.92;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+</style>

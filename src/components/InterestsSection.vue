@@ -100,6 +100,7 @@ onBeforeUnmount(() => ctx?.revert())
             :src="t"
             :alt="`郁金香照片 ${i + 1}`"
             class="tulip-img aspect-square w-full rounded-xl border border-line object-cover shadow-sm transition-transform duration-300 hover:-translate-y-1 hover:scale-[1.04] hover:border-accent/50"
+            :style="{ animationDelay: `${(i * 0.35).toFixed(2)}s` }"
           />
         </div>
       </div>
@@ -109,3 +110,19 @@ onBeforeUnmount(() => ctx?.revert())
     <MarqueeDivider direction="right" unit="与真心共赏"/>
   </div>
 </template>
+
+<style scoped>
+/* 郁金香照片:花朵呼吸式微亮,错峰,像认真开放 */
+.tulip-img {
+  animation: tulip-shimmer 4.6s ease-in-out infinite;
+}
+@keyframes tulip-shimmer {
+  0%,
+  100% {
+    opacity: 0.9;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+</style>

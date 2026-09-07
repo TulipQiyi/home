@@ -19,6 +19,35 @@ const quotes = [
 ]
 </script>
 
+<style scoped>
+/* 玩家的话:逐条呼吸式微亮,像珍藏的话在发光 */
+.q-shimmer {
+  animation: q-shimmer 4.2s ease-in-out infinite;
+}
+@keyframes q-shimmer {
+  0%,
+  100% {
+    opacity: 0.9;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+/* 特性标签:错峰微亮(与技能 chips 同风格) */
+.chip-f {
+  animation: chip-f 4s ease-in-out infinite;
+}
+@keyframes chip-f {
+  0%,
+  100% {
+    opacity: 0.9;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+</style>
+
 <template>
   <SectionHeading id="server" kicker="Server" title="「竹像素」公益服" align="right">
     <!-- 宽幅电影感的展示面板:字幕压在图底;仅用 data-reveal 淡入上移(与全站一致),不做滚动缩放 -->
@@ -48,7 +77,7 @@ const quotes = [
           <span
             v-for="f in features"
             :key="f.label"
-            class="inline-flex items-center gap-2 rounded-full border border-line bg-surface/60 px-3 py-1 text-sm text-soft"
+            class="chip-f inline-flex items-center gap-2 rounded-full border border-line bg-surface/60 px-3 py-1 text-sm text-soft"
           >
             <span class="h-2 w-2 rounded-full" :class="f.dot"></span>
             {{ f.label }}
@@ -69,7 +98,7 @@ const quotes = [
         data-reveal-from="up"
         class="border-b border-line pb-4"
       >
-        <p class="font-display text-base italic leading-relaxed text-ink">「{{ q.text }}」</p>
+        <p class="q-shimmer font-display text-base italic leading-relaxed text-ink">「{{ q.text }}」</p>
         <footer class="mt-1 text-xs text-faint">{{ q.who }}</footer>
       </blockquote>
     </div>

@@ -86,7 +86,7 @@ onBeforeUnmount(() => {
           :key="group.title"
           data-reveal
           data-reveal-from="up"
-          class="rounded-2xl border border-line bg-surface/70 p-6"
+          class="rounded-2xl border border-line bg-surface/70 p-6 transition-colors hover:border-accent/40 hover:shadow-[0_0_26px_rgba(138,180,255,0.14)]"
         >
           <div class="mb-1 flex items-center gap-3">
             <span class="grid h-11 w-11 place-items-center rounded-xl border border-line bg-surface2 text-accent" aria-hidden="true"><MdiIcon :name="group.icon" :size="26" /></span>
@@ -97,9 +97,10 @@ onBeforeUnmount(() => {
           </div>
           <div class="mt-4 flex flex-wrap gap-2">
             <span
-              v-for="item in group.items"
+              v-for="(item, j) in group.items"
               :key="item"
-              class="rounded-full border border-line bg-surface2 px-3 py-1 text-sm text-soft"
+              class="chip-shimmer rounded-full border border-line bg-surface2 px-3 py-1 text-sm text-soft"
+              :style="{ animationDelay: `${(j * 0.12).toFixed(2)}s` }"
             >
               {{ item }}
             </span>
@@ -109,3 +110,19 @@ onBeforeUnmount(() => {
     </div>
   </SectionHeading>
 </template>
+
+<style scoped>
+/* 技能 chips:逐项错峰微亮,像一个个小元件在呼吸 */
+.chip-shimmer {
+  animation: chip-shimmer 4s ease-in-out infinite;
+}
+@keyframes chip-shimmer {
+  0%,
+  100% {
+    opacity: 0.9;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+</style>

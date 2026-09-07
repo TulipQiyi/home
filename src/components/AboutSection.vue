@@ -36,7 +36,7 @@ const points = [
         :key="p.title"
         data-reveal
         data-reveal-from="up"
-        class="rounded-2xl border border-line bg-surface/60 p-6"
+        class="rounded-2xl border border-line bg-surface/60 p-6 transition-colors hover:border-accent/40 hover:shadow-[0_0_26px_rgba(138,180,255,0.14)]"
       >
         <div class="mb-3 text-accent2" aria-hidden="true">
           <MdiIcon :name="p.icon" :size="28" />
