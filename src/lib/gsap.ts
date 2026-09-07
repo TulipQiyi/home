@@ -67,11 +67,12 @@ export function scrollToEl(target: string | number, offsetY = 84) {
   })
 }
 
-/** 磁吸交互:元素在指针靠近时轻微吸向指针,移出后弹回(参考:磁吸交互)。 */
+/** 磁吸交互:指针进入元素矩形包围盒的外扩范围即触发、离开后弹回(适配任意长宽组件)。 */
 export function magneticHover(
   el: HTMLElement,
   opts: {
     strength?: number
+    /** 包围盒四周外扩的边距(默认 40px);控制吸附范围的大小 */
     radius?: number
     inner?: HTMLElement | null
     xStrength?: number
@@ -80,36 +81,39 @@ export function magneticHover(
 ): () => void {
   const xs = opts.xStrength ?? opts.strength ?? 0.4
   const ys = opts.yStrength ?? opts.strength ?? 0.4
-  const radius = opts.radius ?? 130
-  const quickX = gsap.quickTo(el, 'x', { duration: 0.4, ease: 'power2.out' })
-  const quickY = gsap.quickTo(el, 'y', { duration: 0.4, ease: 'power2.out' })
-
+  const margin = opts.radius ?? 40
   const inner = opts.inner
-  const quickIX = inner ? gsap.quickTo(inner, 'x', { duration: 0.5, ease: 'power2.out' }) : null
-  const quickIY = inner ? gsap.quickTo(inner, 'y', { duration: 0.5, ease: 'power2.out' }) : null
+
+  // 统一用 gsap.to + overwrite:'auto':同一时刻只有一个过渡在控制元素的 x/y,
+  // 进入/离开/再次进入都从「当前值」平滑过渡——避免 quickTo 复用导致的再进入瞬跳
+  let inRange = false
 
   const onMove = (e: MouseEvent) => {
     const r = el.getBoundingClientRect()
-    const x = e.clientX - r.left - r.width / 2
-    const y = e.clientY - r.top - r.height / 2
-    if (Math.hypot(x, y) < radius) {
-      quickX(x * xs)
-      quickY(y * ys)
-      if (inner && quickIX) quickIX(x * xs * 0.5)
-      if (inner && quickIY) quickIY(y * ys * 0.5)
+    const x = e.clientX
+    const y = e.clientY
+    // 按「元素矩形包围盒 + margin」判定(不再是圆形),适配任意长宽:
+    // 左右可覆盖元素全长,上下仅多出 margin——避免圆形导致左右吸不到、上下范围过大
+    const near =
+      x >= r.left - margin && x <= r.right + margin && y >= r.top - margin && y <= r.bottom + margin
+    if (near) {
+      if (!inRange) inRange = true
+      const dx = x - (r.left + r.width / 2)
+      const dy = y - (r.top + r.height / 2)
+      gsap.to(el, { x: dx * xs, y: dy * ys, duration: 0.18, ease: 'power2.out', overwrite: 'auto' })
+      if (inner)
+        gsap.to(inner, { x: dx * xs * 0.5, y: dy * ys * 0.5, duration: 0.22, ease: 'power2.out', overwrite: 'auto' })
+    } else if (inRange) {
+      inRange = false
+      gsap.to(el, { x: 0, y: 0, duration: 0.5, ease: 'elastic.out(1, 0.4)', overwrite: 'auto' })
+      if (inner) gsap.to(inner, { x: 0, y: 0, duration: 0.4, ease: 'power2.out', overwrite: 'auto' })
     }
   }
-  const onLeave = () => {
-    gsap.to(el, { x: 0, y: 0, duration: 0.6, ease: 'elastic.out(1, 0.4)' })
-    if (inner) gsap.to(inner, { x: 0, y: 0, duration: 0.5, ease: 'power2.out' })
-  }
 
-  el.addEventListener('mousemove', onMove)
-  el.addEventListener('mouseleave', onLeave)
+  window.addEventListener('mousemove', onMove)
 
   return () => {
-    el.removeEventListener('mousemove', onMove)
-    el.removeEventListener('mouseleave', onLeave)
+    window.removeEventListener('mousemove', onMove)
   }
 }
 
