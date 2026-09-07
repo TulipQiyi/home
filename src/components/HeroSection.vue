@@ -61,10 +61,15 @@ onMounted(() => {
       ease: 'back.out(1.7)',
     })
 
-    // 磁吸交互:「向下探索」箭头(标题磁吸已按需求移除)
+    // 逐字磁吸:靠近标题字即被吸向光标(复用 magneticHover)
+    gsap.utils.toArray<HTMLElement>('.hero-char').forEach((el) => {
+      undoMag.push(magneticHover(el, { strength: 0.35, radius: 70 }))
+    })
+
+    // 磁吸交互:「向下探索」箭头
     if (arrow.value) {
       innerEl = arrow.value.querySelector('span') as HTMLElement | null
-      undoMag.push(magneticHover(arrow.value, { strength: 0.4, radius: 500, inner: innerEl }))
+      undoMag.push(magneticHover(arrow.value, { strength: 0.4, radius: 80, inner: innerEl }))
     }
   }, document.getElementById('hero') as HTMLElement)
 })
@@ -123,15 +128,20 @@ function scrollTo(id: string) {
     >
       <p class="hero-el mb-3 text-xs tracking-[0.4em] text-faint">CLOUDERY · QIYI</p>
 
-      <!-- 逐字标题 -->
-      <h1 class="inline-flex font-display text-5xl font-medium tracking-wide text-ink sm:text-6xl">
+      <!-- 逐字标题:整体呼吸(hero-title) + 逐字磁吸(hero-char) + 逐字微光(hero-char-inner) -->
+      <h1 class="hero-title relative inline-flex font-display text-5xl font-medium tracking-wide text-ink sm:text-6xl">
         <span
           v-for="(ch, i) in nameChars"
           :key="i"
           class="hero-char inline-block"
-          :class="ch === '·' ? 'text-accent' : ''"
-          >{{ ch }}</span
         >
+          <span
+            class="hero-char-inner inline-block"
+            :class="ch === '·' ? 'text-accent' : ''"
+            :style="{ animationDelay: `${(i * 0.22).toFixed(2)}s` }"
+            >{{ ch }}</span
+          >
+        </span>
       </h1>
 
       <p class="hero-el mt-4 h-8 text-lg text-soft sm:text-xl">
@@ -153,7 +163,7 @@ function scrollTo(id: string) {
           class="group inline-flex items-center gap-2 text-sm text-faint transition-colors hover:text-soft"
         >
           <span class="tracking-widest">向下探索</span>
-          <span class="text-xl leading-none transition-transform duration-500 group-hover:translate-y-1">↓</span>
+          <span class="arrow-glow text-xl leading-none transition-transform duration-500 group-hover:translate-y-1">↓</span>
         </a>
       </div>
     </div>
@@ -161,3 +171,52 @@ function scrollTo(id: string) {
     <!-- 动能滚动条已移到 App(首屏与 about 之间) -->
   </header>
 </template>
+
+<style scoped>
+/* 整体呼吸:标题整行统一纵向起伏 + 轻微缩放,像活着 */
+.hero-title {
+  position: relative;
+  animation: hero-breathe 5.5s ease-in-out infinite;
+}
+@keyframes hero-breathe {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-4px) scale(1.015);
+  }
+}
+
+/* 逐字微光:每个字各自错峰点亮,藏着微光 */
+.hero-char-inner {
+  display: inline-block;
+  animation: hero-shimmer 4.4s ease-in-out infinite;
+}
+@keyframes hero-shimmer {
+  0%,
+  100% {
+    opacity: 0.94;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* 向下探索箭头:呼吸式淡蓝光晕,指引感 */
+.arrow-glow {
+  color: #8ab4ff;
+  animation: arrow-glow 2.8s ease-in-out infinite;
+}
+@keyframes arrow-glow {
+  0%,
+  100% {
+    text-shadow: 0 0 4px rgba(138, 180, 255, 0.4), 0 2px 10px rgba(138, 180, 255, 0.25);
+    transform: translateY(0);
+  }
+  50% {
+    text-shadow: 0 0 10px rgba(138, 180, 255, 0.85), 0 3px 18px rgba(138, 180, 255, 0.5);
+    transform: translateY(3px);
+  }
+}
+</style>
