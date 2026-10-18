@@ -126,3 +126,18 @@ body {
     opacity: 1;
   }
 }
+
+/* ============================================================
+   无障碍兜底:系统开启「减弱动态」时,停掉所有常驻动画
+   (JS 侧见 src/lib/gsap.ts 与 src/components/Starfield.vue)
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -7,6 +7,26 @@
     <meta name="description" content="柒屹（Qiyi）的个人主页 —— 云术工作室核心成员、开源贡献者、《我的世界》公益服「竹像素」运营者。" />
     <meta name="theme-color" content="#0e1116" />
     <title>柒屹 · Qiyi — 简单，够用，就很好</title>
+    <script>
+      // 在首帧之前定好主题,避免暗/亮切换闪烁(与 src/composables/useTheme.ts 保持一致)
+      ;(function () {
+        try {
+          var saved = localStorage.getItem('qiyi-theme')
+          var mode = saved === 'light' || saved === 'dark' || saved === 'system' ? saved : 'dark'
+          var resolved =
+            mode === 'system'
+              ? window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light'
+              : mode
+          var root = document.documentElement
+          root.dataset.theme = resolved
+          root.style.colorScheme = resolved
+        } catch (e) {
+          document.documentElement.dataset.theme = 'dark'
+        }
+      })()
+    </script>
   </head>
   <body>
     <div id="app"></div>
