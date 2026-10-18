@@ -84,17 +84,10 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-/* 蓝色光晕:柔和呼吸 */
-@keyframes q-glow-pulse {
-  0%,
-  100% {
-    text-shadow: 0 0 5px rgba(120, 168, 255, 0.35), 0 0 12px rgba(120, 168, 255, 0.2);
-  }
-  50% {
-    text-shadow: 0 0 12px rgba(120, 168, 255, 0.85), 0 0 26px rgba(120, 168, 255, 0.45);
-  }
-}
+/* 蓝色光晕:静态(逐字动画由 GSAP stagger 负责,不再逐帧重绘 text-shadow) */
 .q-glow {
-  animation: q-glow-pulse 2.6s ease-in-out infinite;
+  text-shadow:
+    0 0 8px rgba(120, 168, 255, 0.45),
+    0 0 18px rgba(120, 168, 255, 0.25);
 }
 </style>

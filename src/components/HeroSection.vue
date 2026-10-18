@@ -19,6 +19,7 @@ let undoMag: Array<() => void> = []
 let innerEl: HTMLElement | null = null
 
 onMounted(() => {
+  const heroEl = document.getElementById('hero')
   ctx = gsap.context(() => {
     // 首屏文案进入
     gsap.from('.hero-el', {
@@ -44,7 +45,9 @@ onMounted(() => {
       yPercent: -20,
       ease: 'none',
       scrollTrigger: {
-        trigger: '#hero',
+        // 传元素而非选择器:ScrollSmoother 会把 #smooth-content 挪进
+        // .ScrollSmoother-wrapper,选择器解析时机不稳定(会打印 Element not found: #hero)
+        trigger: heroEl,
         start: 'top top',
         end: 'bottom top',
         scrub: 0.6,
@@ -71,7 +74,7 @@ onMounted(() => {
       innerEl = arrow.value.querySelector('span') as HTMLElement | null
       undoMag.push(magneticHover(arrow.value, { strength: 0.4, radius: 80, inner: innerEl }))
     }
-  }, document.getElementById('hero') as HTMLElement)
+  }, heroEl as HTMLElement)
 })
 
 onBeforeUnmount(() => {
@@ -92,6 +95,8 @@ function scrollTo(id: string) {
       :src="heroBg"
       alt=""
       aria-hidden="true"
+      fetchpriority="high"
+      decoding="async"
       class="hero-bg absolute inset-0 h-full w-full object-cover will-change-transform scale-120"
     />
     <!-- 深色遮罩:左下最实,保证文字可读又保持氛围 -->
@@ -138,7 +143,6 @@ function scrollTo(id: string) {
           <span
             class="hero-char-inner inline-block"
             :class="ch === '·' ? 'text-accent' : ''"
-            :style="{ animationDelay: `${(i * 0.22).toFixed(2)}s` }"
             >{{ ch }}</span
           >
         </span>
@@ -188,35 +192,15 @@ function scrollTo(id: string) {
   }
 }
 
-/* 逐字微光:每个字各自错峰点亮,藏着微光 */
 .hero-char-inner {
   display: inline-block;
-  animation: hero-shimmer 4.4s ease-in-out infinite;
-}
-@keyframes hero-shimmer {
-  0%,
-  100% {
-    opacity: 0.94;
-  }
-  50% {
-    opacity: 1;
-  }
 }
 
-/* 向下探索箭头:呼吸式淡蓝光晕,指引感 */
+/* 向下探索箭头:静态淡蓝光晕 + 原有 hover 位移(不再逐帧动 text-shadow) */
 .arrow-glow {
   color: #8ab4ff;
-  animation: arrow-glow 2.8s ease-in-out infinite;
-}
-@keyframes arrow-glow {
-  0%,
-  100% {
-    text-shadow: 0 0 4px rgba(138, 180, 255, 0.4), 0 2px 10px rgba(138, 180, 255, 0.25);
-    transform: translateY(0);
-  }
-  50% {
-    text-shadow: 0 0 10px rgba(138, 180, 255, 0.85), 0 3px 18px rgba(138, 180, 255, 0.5);
-    transform: translateY(3px);
-  }
+  text-shadow:
+    0 0 8px rgba(138, 180, 255, 0.55),
+    0 2px 12px rgba(138, 180, 255, 0.3);
 }
 </style>

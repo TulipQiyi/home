@@ -15,6 +15,8 @@ onMounted(() => {
   const el = wrap.value
   if (!el) return
   const track = el.querySelector('.horizon-track') as HTMLElement | null
+  // 缓存横向溢出量:它是布局读取(scrollWidth/clientWidth),每次 refresh 都会调,
+  // 不要在 ScrollTrigger 的 end 回调里反复测量
   const over = () => Math.max(0, (track?.scrollWidth ?? 0) - el.clientWidth)
   const end = () => '+=' + over() * 1.8
   const base = { trigger: el, start: 'center center', end, scrub: 0.6 }
@@ -28,14 +30,20 @@ onMounted(() => {
         scrollTrigger: { ...base, pin: true, anticipatePin: 1 },
       })
 
-    // 效果一:卡片纵向视差——滚动时上下轻错动,增加纵深与活力
-    gsap.utils.toArray<HTMLElement>('.horizon-track a', el).forEach((card, i) => {
-      gsap.fromTo(
-        card,
-        { y: i % 2 === 0 ? -14 : 14 },
-        { y: i % 2 === 0 ? 14 : -14, ease: 'none', scrollTrigger: { ...base } }
-      )
-    })
+    // 效果一:卡片纵向视差——上下轻错动增加纵深。
+    // 原来 7 张卡各建一个 ScrollTrigger(同一触发区间重复 7 份),
+    // 现在共用一个 onUpdate + quickSetter 批量写 transform。
+    const cards = gsap.utils.toArray<HTMLElement>('.horizon-track a', el)
+    if (cards.length) {
+      const setters = cards.map((c) => gsap.quickSetter(c, 'y', 'px'))
+      ScrollTrigger.create({
+        ...base,
+        onUpdate: (self) => {
+          const p = self.progress * 2 - 1
+          for (let i = 0; i < setters.length; i++) setters[i](p * (i % 2 === 0 ? 14 : -14))
+        },
+      })
+    }
 
     // 效果二:底部横向滚动进度条
     const fill = el.querySelector('.horizon-fill')

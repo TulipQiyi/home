@@ -55,12 +55,7 @@ onBeforeUnmount(() => {
     <h2 ref="titleEl" data-reveal data-reveal-from="up" :class="['font-display text-3xl font-medium text-ink sm:text-4xl', titleBlock]">
       <slot name="title">
         <span class="heading-title inline-flex flex-wrap">
-          <span
-            v-for="(c, i) in titleChars"
-            :key="i"
-            class="heading-char inline-block"
-            :style="{ animationDelay: `${(i * 0.37).toFixed(2)}s` }"
-          >
+          <span v-for="(c, i) in titleChars" :key="i" class="heading-char inline-block">
             <span
               class="heading-char-inner inline-block"
               :class="{ 'heading-glow': glowSet.has(c) }"
@@ -92,49 +87,15 @@ onBeforeUnmount(() => {
   }
 }
 
-/* 每个字各自的细小闪烁(错峰),像各自藏着微光 */
-.heading-char {
-  animation: char-shimmer 4.4s ease-in-out infinite;
-}
-@keyframes char-shimmer {
-  0%,
-  100% {
-    opacity: 0.94;
-  }
-  50% {
-    opacity: 1;
-  }
-}
 .heading-char-inner {
   display: inline-block;
 }
 
-/* kicker 小标签也跟着活:呼吸式微亮 */
-.heading-kicker {
-  animation: heading-kicker-shimmer 4s ease-in-out infinite;
-}
-@keyframes heading-kicker-shimmer {
-  0%,
-  100% {
-    opacity: 0.88;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-/* glow 指定字符的柔和蓝光:呼吸式脉动 */
+/* glow 指定字符的柔和蓝光:静态阴影(此前逐帧重绘 text-shadow,是样式重算的主要来源之一) */
 .heading-glow {
   color: #8ab4ff;
-  animation: heading-glow-pulse 2.6s ease-in-out infinite;
-}
-@keyframes heading-glow-pulse {
-  0%,
-  100% {
-    text-shadow: 0 0 6px rgba(138, 180, 255, 0.5), 0 0 16px rgba(138, 180, 255, 0.28);
-  }
-  50% {
-    text-shadow: 0 0 12px rgba(138, 180, 255, 0.8), 0 0 28px rgba(138, 180, 255, 0.45);
-  }
+  text-shadow:
+    0 0 8px rgba(138, 180, 255, 0.55),
+    0 0 20px rgba(138, 180, 255, 0.3);
 }
 </style>

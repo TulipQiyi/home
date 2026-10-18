@@ -20,29 +20,26 @@ const quotes = [
 </script>
 
 <style scoped>
-/* 玩家的话:逐条呼吸式微亮,像珍藏的话在发光 */
+/* 玩家的话 / 特性标签:入场淡入一次即可(揭示动画已负责可见性) */
 .q-shimmer {
-  animation: q-shimmer 4.2s ease-in-out infinite;
+  animation: q-in 0.6s ease-out both;
 }
-@keyframes q-shimmer {
-  0%,
-  100% {
-    opacity: 0.9;
+@keyframes q-in {
+  from {
+    opacity: 0.72;
   }
-  50% {
+  to {
     opacity: 1;
   }
 }
-/* 特性标签:错峰微亮(与技能 chips 同风格) */
 .chip-f {
-  animation: chip-f 4s ease-in-out infinite;
+  animation: chip-f-in 0.5s ease-out both;
 }
-@keyframes chip-f {
-  0%,
-  100% {
-    opacity: 0.9;
+@keyframes chip-f-in {
+  from {
+    opacity: 0.72;
   }
-  50% {
+  to {
     opacity: 1;
   }
 }
@@ -59,6 +56,8 @@ const quotes = [
       <img
         :src="bambooImg"
         alt="「竹像素」服务器展示图"
+        loading="lazy"
+        decoding="async"
         class="block aspect-video w-full object-cover"
       />
       <div

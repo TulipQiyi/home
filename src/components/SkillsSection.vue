@@ -17,13 +17,17 @@ const ROWS = 5
 const root = ref<HTMLElement | null>(null)
 let ctx: gsap.Context | undefined
 let onWinMove: ((e: MouseEvent) => void) | undefined
+let io: IntersectionObserver | null = null
+let onVis: (() => void) | undefined
 
 onMounted(() => {
   ctx = gsap.context(() => {
+    const rows = gsap.utils.toArray<HTMLElement>('.marquee-line', root.value ?? undefined)
+
     // 每行独立无缝滚动:对整行(内含两份拷贝)做 xPercent 0→-50 循环,相邻行方向交错、时长各不同
-    gsap.utils.toArray<HTMLElement>('.marquee-line', root.value ?? undefined).forEach((el, i) => {
+    const loops = rows.map((el, i) => {
       const dir = i % 2 === 0 ? 1 : -1
-      gsap.fromTo(
+      return gsap.fromTo(
         el,
         { xPercent: dir > 0 ? -50 : 0 },
         { xPercent: dir > 0 ? 0 : -50, duration: 20 + ((i * 13) % 12) * 4, ease: 'none', repeat: -1 }
@@ -31,17 +35,16 @@ onMounted(() => {
     })
 
     // 鼠标视差:每行随鼠标 y 轻微错动
-    const rows = gsap.utils.toArray<HTMLElement>('.marquee-line', root.value ?? undefined)
     const quickRow = rows.map((row, i) => gsap.quickTo(row, 'y', { duration: 0.6 + i * 0.1, ease: 'power2.out' }))
     onWinMove = (e: MouseEvent) => {
       const center = window.innerHeight / 2
       const m = ((e.clientY - center) / center) * 18
       quickRow.forEach((fn, i) => fn((i % 2 === 0 ? m : -m) * (0.6 + i * 0.2)))
     }
-    window.addEventListener('mousemove', onWinMove)
+    window.addEventListener('mousemove', onWinMove, { passive: true })
 
     // 滚动视差:整段滚过时,每行额外做方向交错的横向漂移,增强背景纵深
-    gsap.utils.toArray<HTMLElement>('.marquee-line', root.value ?? undefined).forEach((el, i) => {
+    rows.forEach((el, i) => {
       const dir = i % 2 === 0 ? 1 : -1
       gsap.fromTo(
         el,
@@ -58,11 +61,37 @@ onMounted(() => {
         }
       )
     })
+
+    // 整段离开视口时挂起 5 条无限循环 tween:它们本来全天候跑,
+    // 但用户看不到 —— 滚回来再恢复,视觉完全一致
+    const host = root.value
+    if (host && typeof IntersectionObserver !== 'undefined') {
+      let running = true
+      io = new IntersectionObserver(
+        (entries) => {
+          const on = entries[0]?.isIntersecting ?? false
+          if (on === running) return
+          running = on
+          loops.forEach((t) => (on ? t.play() : t.pause()))
+        },
+        { rootMargin: '200px' }
+      )
+      io.observe(host)
+
+      onVis = () => {
+        if (document.hidden) loops.forEach((t) => t.pause())
+        else if (running) loops.forEach((t) => t.play())
+      }
+      document.addEventListener('visibilitychange', onVis)
+    }
   }, root.value ?? undefined)
 })
 
 onBeforeUnmount(() => {
   ctx?.revert()
+  io?.disconnect()
+  io = null
+  if (onVis) document.removeEventListener('visibilitychange', onVis)
   if (onWinMove) window.removeEventListener('mousemove', onWinMove)
 })
 </script>
@@ -112,16 +141,15 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-/* 技能 chips:逐项错峰微亮,像一个个小元件在呼吸 */
+/* 技能 chips:入场时逐项错峰淡入(一次性),不再常驻 infinite 呼吸 */
 .chip-shimmer {
-  animation: chip-shimmer 4s ease-in-out infinite;
+  animation: chip-in 0.5s ease-out both;
 }
-@keyframes chip-shimmer {
-  0%,
-  100% {
-    opacity: 0.9;
+@keyframes chip-in {
+  from {
+    opacity: 0.72;
   }
-  50% {
+  to {
     opacity: 1;
   }
 }
